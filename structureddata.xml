@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="3.2" type="plugin" group="system" method="upgrade">
+    <name>System - Microdata or RDFa semantics</name>
+    <author>P.Alex (Alexandru Pruteanu)</author>
+    <creationDate>2014</creationDate>
+    <copyright>Copyright (C) 2014 P.Alex (Alexandru Pruteanu). All rights
+        reserved.</copyright>
+    <license>http://opensource.org/licenses/MIT</license>
+    <authorEmail>web.is.art@p-alex.com</authorEmail>
+    <authorUrl>http://p-alex.com</authorUrl>
+    <version>0.1.0</version>
+    <description>PLG_SYSTEM_STRUCTUREDDATA_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="structureddata">structureddata.php</filename>
+        <filename>index.html</filename>
+        <folder>lib</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_structureddata.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_structureddata.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="setting" label="PLG_SYSTEM_STRUCTUREDDATA_FIELDSET_SETTING_LABEL">
+                <field name="suffix" type="text"
+                       default="sd"
+                       label="PLG_SYSTEM_STRUCTUREDDATA_FIELD_SUFFIX_LABEL"
+                       description="PLG_SYSTEM_STRUCTUREDDATA_FIELD_SUFFIX_DESCRIPTION"
+                        />
+                <field name="semantic" type="list"
+                       default="microdata"
+                       label="PLG_SYSTEM_STRUCTUREDDATA_FIELD_SEMANTIC_LABEL"
+                       description="PLG_SYSTEM_STRUCTUREDDATA_FIELD_SEMANTIC_DESCRIPTION"
+                        >
+                    <option value="microdata">Microdata</option>
+                    <option value="rdfa">RDFa Lite 1.1</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>
