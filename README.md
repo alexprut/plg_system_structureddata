@@ -95,7 +95,6 @@ Todos
 -----
 * Add multiple data-suffix support.
 * Add fallbacks support.
-* Disable the parser when the user is editing a content from the frontend.
 
 License
 -------
