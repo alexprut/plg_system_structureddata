@@ -31,9 +31,15 @@ class PlgSystemStructuredData extends JPlugin
 	{
 		$app = JFactory::getApplication();
 
-		// Check that we are in the site application, and the document type is HTML.
-		if (JFactory::getApplication()->isAdmin()
+		// Prevent admin execution, and non HTML documents.
+		if ($app->isAdmin()
 			&& $app->getDocument()->getType() !== 'html')
+		{
+			return true;
+		}
+
+		// Prevent site execution when editing
+		if ($app->isSite() && $app->input->get('layout') == 'edit')
 		{
 			return true;
 		}
