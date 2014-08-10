@@ -20,9 +20,9 @@ class LibParserPlugin
 	/**
 	 * The suffix to search for when parsing the data-* HTML5 attribute
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $suffix = 'sd';
+	protected $suffix = array('sd');
 
 	/**
 	 * Initialize the class and setup the default $semantic, Microdata or RDFa
@@ -56,7 +56,7 @@ class LibParserPlugin
 	 * @param   string  $type  The type of semantic to output, accepted types are 'Microdata' or 'RDFa'
 	 *
 	 * @throws ErrorException
-	 * @return void
+	 * @return object
 	 */
 	public function semantic($type)
 	{
@@ -76,6 +76,8 @@ class LibParserPlugin
 				throw new ErrorException('There is no ' . $type . ' library available');
 				break;
 		}
+
+		return $this;
 	}
 
 	/**
@@ -96,22 +98,65 @@ class LibParserPlugin
 	/**
 	 * Setup the $suffix to search for when parsing the data-* HTML5 attribute
 	 *
+	 * @param   mixed  $suffix  The suffix
+	 *
+	 * @return object
+	 */
+	public function suffix($suffix)
+	{
+		if (is_array($suffix))
+		{
+			while ($string = array_pop($suffix))
+			{
+				$this->addSuffix($string);
+			}
+
+			return $this;
+		}
+
+		$this->addSuffix($suffix);
+
+		return $this;
+	}
+
+	/**
+	 * Add a new $suffix to search for when parsing the data-* HTML5 attribute
+	 *
 	 * @param   string  $string  The suffix
 	 *
-	 * @throws LengthException
 	 * @return void
 	 */
-	public function suffix($string)
+	protected function addSuffix($string)
+	{
+		$string = trim(strtolower((string) $string));
+
+		// Avoid adding a duplicate suffix, also the suffix must be at least one character long
+		if (array_search($string, $this->suffix) || empty($string))
+		{
+			return;
+		}
+
+		// Add the new suffix
+		array_push($this->suffix, $string);
+	}
+
+	/**
+	 * Remove a $suffix entry
+	 *
+	 * @param   string  $string  The suffix
+	 *
+	 * @return object
+	 */
+	public function removeSuffix($string)
 	{
 		$string = strtolower((string) $string);
 
-		// The suffix must be at least one character long
-		if (empty($string))
-		{
-			throw new LengthException('The suffix must be at least one character long');
-		}
+		// Search and remove the suffix
+		unset(
+			$this->suffix[array_search($string, $this->suffix)]
+		);
 
-		$this->suffix = $string;
+		return $this;
 	}
 
 	/**
@@ -125,8 +170,74 @@ class LibParserPlugin
 	}
 
 	/**
+	 * Parse the unit param that will be used to setup the LibStructuredData class,
+	 * e.g. giving the following: $string = 'Type.property';
+	 * will return an array:
+	 * array(
+	 *     'type'     => 'Type,
+	 *     'property' => 'property'
+	 * );
+	 *
+	 * @param   string  $string  The string to parse
+	 *
+	 * @return  array
+	 */
+	protected static function parseParam($string)
+	{
+		// The default array
+		$params = array(
+			'type' => null,
+			'property' => null
+		);
+
+		// Sanitize the $string and parse
+		$string = explode('.', trim((string) $string));
+
+		// If no matches found return the default array
+		if (empty($string[0]))
+		{
+			return $params;
+		}
+
+		// If the first letter is uppercase, then it should be the 'Type', otherwise it should be the 'property'
+		if (ctype_upper($string[0]{0}))
+		{
+			$params['type'] = $string[0];
+		}
+		else
+		{
+			$params['property'] = $string[0];
+
+			return $params;
+		}
+
+		// If there is a string after the first '.dot', and it is lowercase, then it should be the 'property'
+		if (count($string) > 1 && !empty($string[1]) && ctype_lower($string[1]{0}))
+		{
+			$params['property'] = $string[1];
+		}
+
+		return $params;
+	}
+
+	/**
 	 * Parse the params that will be used to setup the LibStructuredData class,
-	 * will parse the current string: 'Type.property FallbackType.fallbackProperty'
+	 * e.g giving the following: $string ='Type Type.property ... FType.fProperty gProperty';
+	 * will return an array:
+	 * array(
+	 *     'setType'   => 'Type',
+	 *     'fallbacks' => array(
+	 *         'specialized' => array(
+	 *             'Type'  => 'property',
+	 *             'FType' => 'fproperty'
+	 *             ...
+	 *         ),
+	 *         'global' => array(
+	 *              ...
+	 *             'gProperty'
+	 *         )
+	 *     )
+	 * );
 	 *
 	 * @param   string  $string  The string to parse
 	 *
@@ -134,69 +245,44 @@ class LibParserPlugin
 	 */
 	protected static function parseParams($string)
 	{
-		// Sanitize the $string
-		$string = trim((string) $string);
-
-		// Break the strings in two parts, the default params, and the fallback params
-		$string = explode(' ', $string);
-
 		// The default array
 		$params = array(
-			'type' => null,
-			'property' => null,
-			'fallbackType' => null,
-			'fallbackProperty' => null
+			'setType'   => null,
+			'fallbacks' => array(
+				'specialized' => array(),
+				'global' => array()
+			)
 		);
 
-		// Parse the default params
-		$tmp = explode('.', $string[0]);
+		// Sanitize the $string, remove single and multiple whitespaces
+		$string = trim(preg_replace('/\s+/', ' ', (string) $string));
 
-		// If it's not an empty string
-		if (!empty($tmp[0]))
+		// Break the strings in small param chunks
+		$string = explode(' ', $string);
+
+		// Parse the small param chunks
+		foreach ($string as $match)
 		{
-			// If the first letter is uppercase, then it should be the Type, otherwise it should be the property
-			if (ctype_upper($tmp[0]{0}))
-			{
-				$params['type'] = $tmp[0];
-			}
-			else
-			{
-				$params['property'] = $tmp[0];
-			}
+			$tmp      = self::parseParam($match);
+			$type     = $tmp['type'];
+			$property = $tmp['property'];
 
-			// If there is a string after the 'dot', and it is lowercase, then it should be the property
-			if (count($tmp) > 1 && !empty($tmp[1]) && !ctype_upper($tmp[1]{0}))
+			// If a 'type' is available and there is no 'property', then it should be a 'setType'
+			if ($type && !$property && !$params['setType'])
 			{
-				$params['property'] = $tmp[1];
-			}
-		}
-
-		// If no fallback params are found, then return the array
-		if (count($string) <= 1)
-		{
-			return $params;
-		}
-
-		// Parse the fallback params
-		$tmp = explode('.', $string[1]);
-
-		// If it's not an empty string
-		if (!empty($tmp[0]))
-		{
-			// If the first letter is uppercase, then it should be the FallbackType, otherwise it should be the fallbackProperty
-			if (ctype_upper($tmp[0]{0}))
-			{
-				$params['fallbackType'] = $tmp[0];
-			}
-			else
-			{
-				$params['fallbackProperty'] = $tmp[0];
+				$params['setType'] = $type;
 			}
 
-			// If there is a string after the 'dot', and it is lowercase, then it should be the fallbackProperty
-			if (count($tmp) > 1 && !empty($tmp[1]) && !ctype_upper($tmp[1]{0}))
+			// If a 'property' is available and there is no 'type', then it should be a 'global' fallback
+			if (!$type && $property)
 			{
-				$params['fallbackProperty'] = $tmp[1];
+				array_push($params['fallbacks']['global'], $property);
+			}
+
+			// If both 'type' and 'property' is available, then it should be a 'specialized' fallback
+			if ($type && $property && !array_key_exists($type, $params['fallbacks']['specialized']))
+			{
+				$params['fallbacks']['specialized'][$type] = $property;
 			}
 		}
 
@@ -212,25 +298,68 @@ class LibParserPlugin
 	 */
 	protected function display($params)
 	{
-		$html = "";
+		$setType    = $params['setType'];
 
-		// Setup the current $type
-		if ($params['type'])
+		// Specialized fallbacks
+		$sFallbacks = $params['fallbacks']['specialized'];
+
+		// Global fallbacks
+		$gFallbacks = $params['fallbacks']['global'];
+
+		// Set the current Type if available
+		if ($setType)
 		{
-			$this->handler->setType($params['type']);
-
-			// Display the scope
-			$html = $this->handler->displayScope();
+			$this->handler->setType($setType);
 		}
 
-		// Setup the $property
-		if ($params['property'])
+		// If no properties available and there is a 'setType', return and display the scope
+		if ($setType && !$sFallbacks && !$gFallbacks)
 		{
-			// Display the scope
-			$html = $this->handler->property($params['property'])->display('inline');
+			return $this->handler->displayScope();
 		}
 
-		return $html;
+		$currentType = $this->handler->getType();
+
+		// Check if there is an available 'specialized' fallback property for the current Type
+		if ($sFallbacks && array_key_exists($currentType, $sFallbacks))
+		{
+			return $this->handler->property($sFallbacks[$currentType])->display('inline');
+		}
+
+		// Check if there is an available 'global' fallback property for the current Type
+		if ($gFallbacks)
+		{
+			foreach ($gFallbacks as $property)
+			{
+				if (LibStructuredData::isPropertyInType($currentType, $property))
+				{
+					return $this->handler->property($property)->display('inline');
+				}
+			}
+		}
+
+		return $this->handler->display('inline');
+	}
+
+	/**
+	 * Find the first data-suffix attribute match available in the node
+	 * e.g. <tag data-one="suffix" data-two="suffix" /> will return 'one'
+	 *
+	 * @param   DOMElement  $node  The node to parse
+	 *
+	 * @return mixed
+	 */
+	protected function getNodeSuffix(DOMElement $node)
+	{
+		foreach ($this->suffix as $suffix)
+		{
+			if ($node->hasAttribute("data-$suffix"))
+			{
+				return $suffix;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -252,21 +381,31 @@ class LibParserPlugin
 		// Create a new DOMXPath, to make XPath queries
 		$xpath = new DOMXPath($doc);
 
-		// Search for the data-* HTML5 attributes
-		$nodeList = $xpath->query("//*[@data-" . $this->suffix . "]");
+		// Create the query pattern
+		$query = array();
 
+		foreach ($this->suffix as $suffix)
+		{
+			array_push($query, "//*[@data-" . $suffix . "]");
+		}
+
+		// Search for the data-* HTML5 attributes
+		$nodeList = $xpath->query(implode('|', $query));
+
+		// Replace each match
 		foreach ($nodeList as $node)
 		{
 			// Retrieve the params used to setup the LibStructuredData library
-			$attribute  = $node->getAttribute('data-' . $this->suffix);
-			$params     = $this->parseParams($attribute);
+			$suffix    = $this->getNodeSuffix($node);
+			$attribute = $node->getAttribute("data-" . $suffix);
+			$params    = $this->parseParams($attribute);
 
 			// Generate the Microdata or RDFa semantic
-			$semantic   = $this->display($params);
+			$semantic  = $this->display($params);
 
 			// Replace the data-* HTML5 attributes with Microdata or RDFa semantics
-			$pattern    = '/data-' . $this->suffix . "=." . $attribute . "./";
-			$html       = preg_replace($pattern, $semantic, $html, 1);
+			$pattern   = '/data-' . $suffix . "=." . $attribute . "./";
+			$html      = preg_replace($pattern, $semantic, $html, 1);
 		}
 
 		return $html;

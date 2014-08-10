@@ -6,7 +6,7 @@ Created during the Google Summer of Code 2014.
 
 If you want to keep your views separated from the logic, ```plg_system_structureddata``` is system plugin for parsing the HTML markup and convert the ```data-*``` HTML5 attributes in Microdata or RDFa Lite 1.1 semantics.  
 
-The ```data-*``` attributes are new in HTML5, they gives us the ability to embed custom data attributes on all HTML elements. So if you disable the library output, the HTML will still be validated.  
+The ```data-*``` attributes are new in HTML5, they gives us the ability to embed custom data attributes on all HTML elements. So if you disable the library output, the HTML will still be validated. The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.  
 
 Installation
 ============
@@ -15,7 +15,7 @@ Installation
 Usage
 =====
 ##### Syntax
-![plg_system_structureddata Syntax](https://palexcom.github.io/PHPStructuredData/images/parser-plugin-syntax-v1.1.0.png)
+![plg_system_structureddata Syntax](https://palexcom.github.io/PHPStructuredData/images/parser-plugin-syntax-v1.3.0.png)
 
 Publisher
 =========
@@ -88,13 +88,10 @@ The ```RDFa``` output will be:
     </span>
 <div>
 ```
-Currently ```plg_system_structureddata``` doesn't support fallbacks or nested displays.
-
 
 Todos
 -----
-* Add multiple data-suffix support.
-* Add fallbacks support.
+* Add nested displays support.
 
 License
 -------

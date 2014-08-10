@@ -14,7 +14,7 @@ defined('JPATH_BASE') or die;
  * the data-* HTML5 attributes in Microdata or RDFa Lite 1.1 semantics.
  *
  * @package     Joomla.Plugin
- * @subpackage  System.StructuredDAta
+ * @subpackage  System.StructuredData
  * @since       3.2
  */
 class PlgSystemStructuredData extends JPlugin
@@ -48,7 +48,8 @@ class PlgSystemStructuredData extends JPlugin
 		JLoader::discover('Lib', JPATH_PLUGINS . '/system/structureddata/lib');
 
 		// Retrieve the params
-		$suffix   = $this->params->get('suffix', 'sd');
+		$suffix   = explode(',', $this->params->get('suffix', 'sd'));
+
 		$semantic = $this->params->get('semantic', 'microdata');
 
 		// Get the body HTML
