@@ -1,11 +1,10 @@
-    StructuredData
+StructuredData
 ==============
 A Joomla ```3.2+``` system plugin (in the ```./lib``` folder is present the new proposed version of the [JMicrodata](https://github.com/joomla/joomla-cms/tree/master/libraries/joomla/microdata "JMicrodata") library).  
 Created during the Google Summer of Code 2014.
-
-
+  
 If you want to keep your views separated from the logic, ```plg_system_structureddata``` is system plugin for parsing the HTML markup and convert the ```data-*``` HTML5 attributes in Microdata or RDFa Lite 1.1 semantics.  
-
+  
 The ```data-*``` attributes are new in HTML5, they gives us the ability to embed custom data attributes on all HTML elements. So if you disable the library output, the HTML will still be validated. The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.  
 
 Installation
