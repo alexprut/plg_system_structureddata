@@ -49,9 +49,9 @@ Let's suppose that somewhere in your code you need to add Microdata or RDFa sema
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span data-sd="author">
+    <span>
         Written by
-        <span data-sd="Person">
+        <span data-sd="author.Person">
             <span data-sd="name">John Doe</span>
         </span>
     </span>
@@ -71,9 +71,9 @@ The ```Microdata``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span itemprop='author'>
+    <span>
         Written by
-        <span itemscope itemtype='https://schema.org/Person'>
+        <span itemprop='author' itemscope itemtype='https://schema.org/Person'>
             <span itemprop='name'>John Doe</span>
         </span>
     </span>
@@ -93,9 +93,9 @@ The ```RDFa``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span property='author'>
+    <span>
         Written by
-        <span vocab='https://schema.org' typeof='Person'>
+        <span property='author' vocab='https://schema.org' typeof='Person'>
             <span property='name'>John Doe</span>
         </span>
     </span>
@@ -116,9 +116,9 @@ The ```Microdata``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span itemprop='author'>
+    <span>
         Written by
-        <span itemscope itemtype='https://schema.org/Person'>
+        <span itemprop='author' itemscope itemtype='https://schema.org/Person'>
             <span itemprop='name'>John Doe</span>
         </span>
     </span>
@@ -138,9 +138,9 @@ The ```RDFa``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span property='author'>
+    <span>
         Written by
-        <span vocab='https://schema.org' typeof='Person'>
+        <span property='author' vocab='https://schema.org' typeof='Person'>
             <span property='name'>John Doe</span>
         </span>
     </span>
@@ -152,10 +152,6 @@ The ```RDFa``` output will be:
     </span>
 <div>
 ```
-
-Todos
------
-* Add nested displays support.
 
 License
 -------
