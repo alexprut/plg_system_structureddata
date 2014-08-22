@@ -135,7 +135,7 @@ abstract class LibStructuredData
 	 */
 	public function isEnabled()
 	{
-		return ($this->enabled) ? true : false;
+		return $this->enabled;
 	}
 
 	/**

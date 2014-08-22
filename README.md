@@ -4,8 +4,8 @@ A Joomla ```3.2+``` system plugin (in the ```./lib``` folder is present the new 
 Created during the Google Summer of Code 2014.
   
 If you want to keep your views separated from the logic, ```plg_system_structureddata``` is system plugin for parsing the HTML markup and convert the ```data-*``` HTML5 attributes in Microdata or RDFa Lite 1.1 semantics.  
-  
-The ```data-*``` attributes are new in HTML5, they gives us the ability to embed custom data attributes on all HTML elements. So if you disable the library output, the HTML will still be validated. The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.  
+
+The ```data-*``` attributes are new in HTML5, they gives us the ability to embed custom data attributes on all HTML elements. So if you disable the library output, the HTML will still be validated. The default suffix the library will search for is ```data-sd```, but you can register more than one custom suffix.  
 
 Installation
 ============
@@ -32,7 +32,7 @@ A combination between both _Type_ and _property_, separated by a dot. In short, 
 A combination between the previous 3 building blocks. The order of the building blocks isn't significant and a white space is used as a separator.  
 ##### The Algorithm:
 1. First the parser checks for __setTypes__. If one or more matches are found then the current global scope will be update with the first match. At this point if there are no specialized or global fallback properties the algorithm will finish and replace the params with the current scope. Otherwise continue to point 2.  
-2. The parser checks for __specialized fallback properties__. If one or more valid matches are found, then replace the params with the first match property and finish the algorithm. Otherwise go to point 3
+2. The parser checks for __specialized fallback properties__. If one or more valid matches are found, then the algorithm will finish and replace the params with the first match property. Otherwise go to point 3
 3. The parser checks for __global fallback properties__. If one or more valid matches are found, then replace the params with the first match property and finish the algorithm.
 
 Publisher
@@ -49,9 +49,9 @@ Let's suppose that somewhere in your code you need to add Microdata or RDFa sema
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span data-sd="author">
+    <span>
         Written by
-        <span data-sd="Person">
+        <span data-sd="author.Person">
             <span data-sd="name">John Doe</span>
         </span>
     </span>
@@ -71,9 +71,9 @@ The ```Microdata``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span itemprop='author'>
+    <span>
         Written by
-        <span itemscope itemtype='https://schema.org/Person'>
+        <span itemprop='author' itemscope itemtype='https://schema.org/Person'>
             <span itemprop='name'>John Doe</span>
         </span>
     </span>
@@ -93,9 +93,9 @@ The ```RDFa``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span property='author'>
+    <span>
         Written by
-        <span vocab='https://schema.org' typeof='Person'>
+        <span property='author' vocab='https://schema.org' typeof='Person'>
             <span property='name'>John Doe</span>
         </span>
     </span>
@@ -116,9 +116,9 @@ The ```Microdata``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span itemprop='author'>
+    <span>
         Written by
-        <span itemscope itemtype='https://schema.org/Person'>
+        <span itemprop='author' itemscope itemtype='https://schema.org/Person'>
             <span itemprop='name'>John Doe</span>
         </span>
     </span>
@@ -138,9 +138,9 @@ The ```RDFa``` output will be:
         How to Tie a Reef Knot
     </span>
     <!-- Author -->
-    <span property='author'>
+    <span>
         Written by
-        <span vocab='https://schema.org' typeof='Person'>
+        <span property='author' vocab='https://schema.org' typeof='Person'>
             <span property='name'>John Doe</span>
         </span>
     </span>
@@ -152,10 +152,6 @@ The ```RDFa``` output will be:
     </span>
 <div>
 ```
-
-Todos
------
-* Add nested displays support.
 
 License
 -------

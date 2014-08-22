@@ -21,7 +21,7 @@
     </languages>
     <config>
         <fields name="params">
-            <fieldset name="setting" label="PLG_SYSTEM_STRUCTUREDDATA_FIELDSET_SETTING_LABEL">
+            <fieldset name="basic">
                 <field name="suffix" type="text"
                        default="sd"
                        label="PLG_SYSTEM_STRUCTUREDDATA_FIELD_SUFFIX_LABEL"

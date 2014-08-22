@@ -33,7 +33,7 @@ class PlgSystemStructuredData extends JPlugin
 
 		// Prevent admin execution, and non HTML documents.
 		if ($app->isAdmin()
-			&& $app->getDocument()->getType() !== 'html')
+			|| $app->getDocument()->getType() !== 'html')
 		{
 			return true;
 		}
