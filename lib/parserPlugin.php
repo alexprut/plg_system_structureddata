@@ -170,7 +170,7 @@ class LibParserPlugin
 	}
 
 	/**
-	 * Parse the unit param that will be used to setup the PHPStructuredData class,
+	 * Parse the unit param that will be used to setup the LibStructuredData class,
 	 * e.g. giving the following: $string = 'Type.property.EType';
 	 * will return an array:
 	 * array(
@@ -233,7 +233,7 @@ class LibParserPlugin
 	}
 
 	/**
-	 * Parse the params that will be used to setup the PHPStructuredData class,
+	 * Parse the params that will be used to setup the LibStructuredData class,
 	 * e.g giving the following: $string ='Type Type.property.EType ... FType.fProperty gProperty.EType sProperty';
 	 * will return an array:
 	 * array(
@@ -306,7 +306,7 @@ class LibParserPlugin
 	/**
 	 * Generate the Microdata or RDFa semantics
 	 *
-	 * @param   array  $params  The params used to setup the PHPStructuredData library
+	 * @param   array  $params  The params used to setup the LibStructuredData library
 	 *
 	 * @return  string
 	 */
@@ -346,7 +346,7 @@ class LibParserPlugin
 
 			// Check if an expected Type is available and it is valid
 			if ($expectedType
-				&& in_array($expectedType, PHPStructuredData::getExpectedTypes($currentType, $property)))
+				&& in_array($expectedType, LibStructuredData::getExpectedTypes($currentType, $property)))
 			{
 				// Update the current Type
 				$this->handler->setType($expectedType);
@@ -364,13 +364,13 @@ class LibParserPlugin
 			foreach ($gFallbacks as $property => $expectedType)
 			{
 				// Check if the property is available in the current Type
-				if (PHPStructuredData::isPropertyInType($currentType, $property))
+				if (LibStructuredData::isPropertyInType($currentType, $property))
 				{
 					$html .= $this->handler->property($property)->display('inline');
 
 					// Check if an expected Type is available
 					if ($expectedType
-						&& in_array($expectedType, PHPStructuredData::getExpectedTypes($currentType, $property)))
+						&& in_array($expectedType, LibStructuredData::getExpectedTypes($currentType, $property)))
 					{
 						// Update the current Type
 						$this->handler->setType($expectedType);
