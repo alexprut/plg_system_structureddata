@@ -3,7 +3,7 @@
  * @package     Joomla.Plugin
  * @subpackage  System.StructuredData
  *
- * @copyright   Copyright (C) 2014 P.Alex (Alexandru Pruteanu)
+ * @copyright   Copyright (C) 2014 Alex Prut (Alexandru Pruteanu)
  * @license     Licensed under the MIT License; see LICENSE
  */
 
